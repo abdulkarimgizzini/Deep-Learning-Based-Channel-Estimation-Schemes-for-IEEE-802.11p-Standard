@@ -31,7 +31,7 @@ for i = 1:nSym
         H_TRFI(equal_indices,1) = Initial_Channel_Estimate(equal_indices,1);
      
         % Interpolation of unrealiable subcarriers 
-         H_TRFI(unequal_indices,1) = interp1(equal_indices,H_TRFI(equal_indices,1),unequal_indices,'cubic'); 
+         H_TRFI(unequal_indices,1) = interp1(equal_indices,H_TRFI(equal_indices,1),unequal_indices,'spline'); 
           
     elseif (i > 1)
         % Step 1: Equalization 
@@ -59,7 +59,7 @@ for i = 1:nSym
         H_TRFI(equal_indices,i) = Initial_Channel_Estimate(equal_indices,1);
         
         % Interpolation of unrealiable subcarriers 
-        H_TRFI(unequal_indices,i) = interp1(equal_indices,H_TRFI(equal_indices,i),unequal_indices,'cubic'); 
+        H_TRFI(unequal_indices,i) = interp1(equal_indices,H_TRFI(equal_indices,i),unequal_indices,'spline'); 
     end
 end
 
