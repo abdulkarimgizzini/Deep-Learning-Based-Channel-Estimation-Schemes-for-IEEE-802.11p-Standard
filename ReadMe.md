@@ -8,6 +8,7 @@ Note-: Please note that the project's files are divided into Matlab_Codes and Py
 ----------------------------------------------------------------------------------------------------------------------
 
 The project's folder is structured as follows:
+-----------------------------------------------
 	+ Matlab_Codes/Main.m: The main simulation file, where the simulation parameters (Channel model, OFDM parameters, Modulation scheme, etc...) are defined. 
 	+ Matlab_Codes/Channel_functions.m: Includes the pre-defined vehicular channel models[3] for different mobility conditions.
 	+ Conventional channel estimators:
