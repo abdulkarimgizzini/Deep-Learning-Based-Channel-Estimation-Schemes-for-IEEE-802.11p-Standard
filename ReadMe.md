@@ -24,7 +24,7 @@ The project's folder is structured as follows:
 		+ Generate the training and testing frames indices: Forexample, in the project we consider (1000 Channel realiztions with nSymbols = 100 per frame),
 		then the saved STA_Structure will be of size 52x100x1000. Therefore we selected 800 and 200 random indices from (1000 indices) to be the training and testing OFDM frames
 		indices respectively. (Since 80% of data is for training and 20% of data is for testing). 
-		+ In this project the training and testing indices are predefined in the DNN_TestingPacketsIndices file.
+		
 		
 	+ Now the generated datasets will be used in the DNN processing part, where we have:
 		+ Python_Codes/DNN_Training.py: here the DNN training is performed employing the training datasets using the following terminal command:
