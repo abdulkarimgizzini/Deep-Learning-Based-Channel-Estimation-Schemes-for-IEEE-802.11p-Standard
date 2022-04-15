@@ -8,7 +8,7 @@ nPSC                   = 4;              % Number of pilot subcarriers
 nZSC                   = 12;             % Number of zeros subcarriers
 nUSC                   = nDSC + nPSC;    % Number of total used subcarriers
 K                      = nUSC + nZSC;    % Number of total subcarriers
-nSym                   = 100;            % Number of OFDM symbols within one frame
+nSym                   = 50;            % Number of OFDM symbols within one frame
 deltaF                 = ofdmBW/nFFT;    % Bandwidth for each subcarrier - include all used and unused subcarriers 
 Tfft                   = 1/deltaF;       % IFFT or FFT period = 6.4us
 Tgi                    = Tfft/4;         % Guard interval duration - duration of cyclic prefix - 1/4th portion of OFDM symbols = 1.6us
@@ -112,7 +112,6 @@ Ber_Initial             = zeros(N_SNR,1);
 Ber_CDP                 = zeros(N_SNR,1);
 Ber_TRFI                = zeros(N_SNR,1);
 Ber_MMSE_VP             = zeros(N_SNR,1);
-Ber_CPI                 = zeros(N_SNR,1);
 % average channel power E(|hf|^2)
 Phf_H_Total             = zeros(N_SNR,1);
 %% Simulation Loop
@@ -185,7 +184,7 @@ for n_snr = 1:N_SNR
 
       
         
-        Phf_H_Total(n_snr) = Phf_H_Total(n_snr) + norm(hf(Kset))^2;
+        Phf_H_Total(n_snr) = Phf_H_Total(n_snr) + mean(sum(abs(hf(Kset,:)).^2));
         %add noise
         noise_preamble = sqrt(K*N0(n_snr))*ch_func.GenRandomNoise([K,2], 1);
         yfp_r = yfp +  noise_preamble;
@@ -197,161 +196,61 @@ for n_snr = 1:N_SNR
        % IEEE 802.11p LS Estimate at Preambles
        he_LS_Preamble = ((yfp_r(Kset,1) + yfp_r(Kset,2))./(2.*predefined_preamble(Kset).'));
        H_LS = repmat(he_LS_Preamble,1,nSym);
-       err_LS_Preamble = norm(H_LS - hf(Kset,:))^2;
-       Err_LS_Preamble (n_snr) = Err_LS_Preamble (n_snr) + err_LS_Preamble;
+       Err_LS_Preamble (n_snr) = Err_LS_Preamble (n_snr) + mean(sum(abs(H_LS - hf(Kset,:)).^2));
        
        %STA Channel Estimation
        [H_STA, Equalized_OFDM_Symbols_STA] = STA(he_LS_Preamble ,y_r, Kset,mod, nUSC, nSym, ppositions, alpha, w, lambda);
-       err_H_STA = norm(H_STA - hf(Kset,:))^2;
-       Err_STA(n_snr) = Err_STA(n_snr) + err_H_STA;
+       Err_STA(n_snr) = Err_STA(n_snr) +  mean(sum(abs(H_STA - hf(Kset,:)).^2)); 
        
        
        %CDP Channel Estimation
         [H_CDP, Equalized_OFDM_Symbols_CDP] = CDP(he_LS_Preamble([1:6, 8:20, 22:31, 33:45, 47:52].',1) ,y_r, data_locations, yfp_r(data_locations,2), predefined_preamble(1,data_locations).', mod, nDSC, nSym);
-        err_H_CDP = norm(H_CDP - hf(data_locations,:))^2;
-        Err_CDP(n_snr) = Err_CDP(n_snr) + err_H_CDP;
+        Err_CDP(n_snr) = Err_CDP(n_snr) + mean(sum(abs(H_CDP - hf(data_locations,:)).^2)); 
       
        %TRFI Channel Estimation ,URS
        [H_TRFI, Equalized_OFDM_Symbols_TRFI] = TRFI(he_LS_Preamble ,y_r, Kset, yfp_r(Kset,2), predefined_preamble(1,Kset).', ppositions, mod, nUSC, nSym);
-       err_H_TRFI = norm(H_TRFI - hf(Kset,:))^2;
-       Err_TRFI(n_snr) = Err_TRFI(n_snr) + err_H_TRFI;
+       Err_TRFI(n_snr) = Err_TRFI(n_snr) + mean(sum(abs(H_TRFI - hf(Kset,:)).^2)); 
     
 
       
        %MMSE + Virtual Pilots
        noise_power_OFDM_Symbols = var(noise_OFDM_Symbols);
        [H_MMSE_VP, Equalized_OFDM_Symbols_MMSE_VP] = MMSE_Vitual_Pilots(he_LS_Preamble ,y_r, Kset,mod, ppositions, dpositions, noise_power_OFDM_Symbols);
-       err_H_MMSE_VP = norm(H_MMSE_VP - hf(Kset,:))^2;
-       Err_MMSE_VP(n_snr) = Err_MMSE_VP(n_snr) + err_H_MMSE_VP;
+       Err_MMSE_VP(n_snr) = Err_MMSE_VP(n_snr) + mean(sum(abs(H_MMSE_VP - hf(Kset,:)).^2)); 
 
        % Initial Channel Estimation
        [H_Initial, Equalized_OFDM_Symbols_Initial] = Initial_Channel_Estimation(he_LS_Preamble ,y_r, Kset, ppositions, mod, nUSC, nSym);
-       err_H_Initial = norm(H_Initial - hf(Kset,:))^2;
-       Err_Initial(n_snr) = Err_Initial(n_snr) + err_H_Initial;
-
-  
+       Err_Initial(n_snr) = Err_Initial(n_snr) + mean(sum(abs(H_Initial - hf(Kset,:)).^2)); 
        
-       % Equalization
-     y_Ideal = y_r(data_locations ,:) ./ hf(data_locations,:); %Ideal
-     y_LS = y_r(data_locations ,:)./ H_LS(dpositions,:); % LS
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-     % QAM - DeMapping
-       De_Mapped_Ideal = qamdemod(sqrt(Pow) * y_Ideal,M);
-       De_Mapped_LS = qamdemod(sqrt(Pow) * y_LS,M);
-       De_Mapped_STA = qamdemod(sqrt(Pow) * Equalized_OFDM_Symbols_STA(dpositions,:),M);
-       De_Mapped_Initial = qamdemod(sqrt(Pow) * Equalized_OFDM_Symbols_Initial(dpositions,:),M); 
-       De_Mapped_CDP = qamdemod(sqrt(Pow) * Equalized_OFDM_Symbols_CDP ,M);
-       De_Mapped_TRFI = qamdemod(sqrt(Pow) * Equalized_OFDM_Symbols_TRFI(dpositions,:),M);
-       De_Mapped_MMSE_VP = qamdemod(sqrt(Pow) * Equalized_OFDM_Symbols_MMSE_VP(dpositions,:),M);
-      
-
-
-
-
-          % Bits Extraction
-           Bits_Ideal = zeros(nDSC,nSym,log2(M));
-           Bits_LS     = zeros(nDSC,nSym,log2(M));
-           Bits_STA         = zeros(nDSC,nSym,log2(M));
-           Bits_Initial      = zeros(nDSC,nSym,log2(M));
-           Bits_CDP         = zeros(nDSC,nSym,log2(M));
-           Bits_TRFI         = zeros(nDSC,nSym,log2(M));
-           Bits_MMSE_VP         = zeros(nDSC,nSym,log2(M));
+       Bits_Ideal                                          = de2bi(qamdemod(sqrt(Pow) * (y_r(data_locations ,:) ./ hf(data_locations,:)),M));
+       Bits_LS                                             = de2bi(qamdemod(sqrt(Pow) * (y_r(data_locations ,:) ./ H_LS(dpositions,:)),M));
+       Bits_STA                                            = de2bi(qamdemod(sqrt(Pow) * (Equalized_OFDM_Symbols_STA(dpositions,:)),M));
+       Bits_CDP                                            = de2bi(qamdemod(sqrt(Pow) * (Equalized_OFDM_Symbols_CDP),M));
+       Bits_TRFI                                           = de2bi(qamdemod(sqrt(Pow) * (Equalized_OFDM_Symbols_TRFI(dpositions,:)),M));
+       Bits_MMSE_VP                                        = de2bi(qamdemod(sqrt(Pow) * Equalized_OFDM_Symbols_MMSE_VP(dpositions,:),M));  
+       Bits_Initial                                        = de2bi(qamdemod(sqrt(Pow) * Equalized_OFDM_Symbols_Initial(dpositions,:),M)); 
        
         
-          for b = 1 : nSym
-                   Bits_Ideal(:,b,:) = de2bi(De_Mapped_Ideal(:,b));
-                   Bits_LS(:,b,:) = de2bi(De_Mapped_LS(:,b)); 
-                   Bits_STA(:,b,:) = de2bi(De_Mapped_STA(:,b)); 
-                   Bits_Initial(:,b,:) = de2bi(De_Mapped_Initial(:,b)); 
-                   Bits_CDP(:,b,:) = de2bi(De_Mapped_CDP(:,b));
-                   Bits_TRFI(:,b,:) = de2bi(De_Mapped_TRFI(:,b));
-                   Bits_MMSE_VP(:,b,:) = de2bi(De_Mapped_MMSE_VP(:,b));                  
-          end           
-          
-          
- 
-          % De-Interleaving
-          % General Block De-Interleaving
-          General_Block_De_Interleaved_Data_Ideal = deintrlv(Bits_Ideal(:),Random_permutation_Vector);
-          General_Block_De_Interleaved_Data_LS    = deintrlv(Bits_LS(:),Random_permutation_Vector);
-          General_Block_De_Interleaved_Data_STA   = deintrlv(Bits_STA(:),Random_permutation_Vector);
-          General_Block_De_Interleaved_Data_Initial   = deintrlv(Bits_Initial(:),Random_permutation_Vector);
-          General_Block_De_Interleaved_Data_CDP   = deintrlv(Bits_CDP(:),Random_permutation_Vector);
-          General_Block_De_Interleaved_Data_TRFI   = deintrlv(Bits_TRFI(:),Random_permutation_Vector);
-          General_Block_De_Interleaved_Data_MMSE_VP   = deintrlv(Bits_MMSE_VP(:),Random_permutation_Vector);
-          
-
-           
-           % Matrix De-Interleaving
-          Matrix_De_Interleaved_Data_Ideal = matintrlv(General_Block_De_Interleaved_Data_Ideal.',Interleaver_Columns,Interleaver_Rows).';
-          Matrix_De_Interleaved_Data_LS    = matintrlv(General_Block_De_Interleaved_Data_LS.',Interleaver_Columns,Interleaver_Rows).';
-           Matrix_De_Interleaved_Data_STA   = matintrlv(General_Block_De_Interleaved_Data_STA.',Interleaver_Columns,Interleaver_Rows).';
-           Matrix_De_Interleaved_Data_Initial   = matintrlv(General_Block_De_Interleaved_Data_Initial.',Interleaver_Columns,Interleaver_Rows).';
-          Matrix_De_Interleaved_Data_CDP   = matintrlv(General_Block_De_Interleaved_Data_CDP.',Interleaver_Columns,Interleaver_Rows).';
-           Matrix_De_Interleaved_Data_TRFI   = matintrlv(General_Block_De_Interleaved_Data_TRFI.',Interleaver_Columns,Interleaver_Rows).';
-           Matrix_De_Interleaved_Data_MMSE_VP   = matintrlv(General_Block_De_Interleaved_Data_MMSE_VP.',Interleaver_Columns,Interleaver_Rows).';
-           
-
-
-           % Viterbi decoder
-           Decoded_Bits_Ideal = vitdec(Matrix_De_Interleaved_Data_Ideal,trellis,tbl,'trunc','hard');
-           Decoded_Bits_LS    = vitdec(Matrix_De_Interleaved_Data_LS,trellis,tbl,'trunc','hard');
-            Decoded_Bits_STA   = vitdec(Matrix_De_Interleaved_Data_STA,trellis,tbl,'trunc','hard');
-            Decoded_Bits_Initial   = vitdec(Matrix_De_Interleaved_Data_Initial,trellis,tbl,'trunc','hard');
-            Decoded_Bits_CDP   = vitdec(Matrix_De_Interleaved_Data_CDP,trellis,tbl,'trunc','hard');
-            Decoded_Bits_TRFI   = vitdec(Matrix_De_Interleaved_Data_TRFI,trellis,tbl,'trunc','hard');
-            Decoded_Bits_MMSE_VP   = vitdec(Matrix_De_Interleaved_Data_MMSE_VP,trellis,tbl,'trunc','hard');
-           
-
-           
-           
-           % De-scrambler Data
-             Bits_Ideal_Final = wlanScramble(Decoded_Bits_Ideal,scramInit);
-             Bits_LS_Final = wlanScramble(Decoded_Bits_LS,scramInit);
-            Bits_STA_Final = wlanScramble(Decoded_Bits_STA,scramInit);
-            Bits_Initial_Final = wlanScramble(Decoded_Bits_Initial,scramInit);
-            Bits_CDP_Final = wlanScramble(Decoded_Bits_CDP,scramInit);
-            Bits_TRFI_Final = wlanScramble(Decoded_Bits_TRFI,scramInit);
-            Bits_MMSE_VP_Final = wlanScramble(Decoded_Bits_MMSE_VP,scramInit);
-           
-
-            
-           
-           % BER and FER Calculation
-           ber_Ideal  = biterr(Bits_Ideal_Final,Bits_Stream_Coded);
-           
-           
-           ber_LS     = biterr(Bits_LS_Final,Bits_Stream_Coded);
-           
-           
-            ber_STA = biterr(Bits_STA_Final,Bits_Stream_Coded);
-            ber_Initial = biterr(Bits_Initial_Final,Bits_Stream_Coded);    
-            ber_CDP = biterr(Bits_CDP_Final,Bits_Stream_Coded); 
-            ber_TRFI = biterr(Bits_TRFI_Final,Bits_Stream_Coded);
-            ber_MMSE_VP = biterr(Bits_MMSE_VP_Final,Bits_Stream_Coded);
-             
-
-            
-            
-            Ber_Ideal (n_snr) = Ber_Ideal (n_snr) + ber_Ideal;
-            Ber_LS (n_snr)    = Ber_LS (n_snr) + ber_LS;
-            Ber_STA(n_snr)    = Ber_STA(n_snr) + ber_STA;
-            Ber_Initial(n_snr)    = Ber_Initial(n_snr) + ber_Initial;
-            Ber_TRFI(n_snr)   = Ber_TRFI(n_snr) + ber_TRFI;
-            Ber_CDP(n_snr)    = Ber_CDP(n_snr) + ber_CDP;
-            Ber_MMSE_VP(n_snr)   = Ber_MMSE_VP(n_snr) + ber_MMSE_VP;
-           
-            
-          TX_Bits_Stream_Structure(:, n_ch) = Bits_Stream_Coded;
-          Received_Symbols_FFT_Structure(:,:,n_ch) = y_r(Kset,:);
-          True_Channels_Structure(:,:,n_ch) = hf(Kset,:);
-          DPA_Structure(:,:,n_ch)  = H_Initial;
-          STA_Structure(:,:,n_ch)  = H_STA;
-          TRFI_Structure(:,:,n_ch)  = H_TRFI;          
+       Ber_Ideal (n_snr)                                   = Ber_Ideal (n_snr) + biterr(wlanScramble((vitdec((matintrlv((deintrlv(Bits_Ideal(:),Random_permutation_Vector)).',Interleaver_Columns,Interleaver_Rows).'),trellis,tbl,'trunc','hard')),scramInit),Bits_Stream_Coded);
+       Ber_LS(n_snr)                                       = Ber_LS(n_snr) + biterr(wlanScramble((vitdec(matintrlv((deintrlv(Bits_LS(:),Random_permutation_Vector)).',Interleaver_Columns,Interleaver_Rows).',trellis,tbl,'trunc','hard')),scramInit),Bits_Stream_Coded); 
+       Ber_STA(n_snr)                                      = Ber_STA(n_snr) + biterr(wlanScramble((vitdec(matintrlv((deintrlv(Bits_STA(:),Random_permutation_Vector)).',Interleaver_Columns,Interleaver_Rows).',trellis,tbl,'trunc','hard')),scramInit),Bits_Stream_Coded); 
+       Ber_CDP(n_snr)                                      = Ber_CDP(n_snr) + biterr(wlanScramble((vitdec(matintrlv((deintrlv(Bits_CDP(:),Random_permutation_Vector)).',Interleaver_Columns,Interleaver_Rows).',trellis,tbl,'trunc','hard')),scramInit),Bits_Stream_Coded); 
+       Ber_TRFI(n_snr)                                     = Ber_TRFI(n_snr) + biterr(wlanScramble((vitdec(matintrlv((deintrlv(Bits_TRFI(:),Random_permutation_Vector)).',Interleaver_Columns,Interleaver_Rows).',trellis,tbl,'trunc','hard')),scramInit),Bits_Stream_Coded); 
+       Ber_MMSE_VP(n_snr)                                  = Ber_MMSE_VP(n_snr) + biterr(wlanScramble((vitdec(matintrlv((deintrlv(Bits_MMSE_VP(:),Random_permutation_Vector)).',Interleaver_Columns,Interleaver_Rows).',trellis,tbl,'trunc','hard')),scramInit),Bits_Stream_Coded); 
+       Ber_Initial(n_snr)                                  = Ber_Initial(n_snr) + biterr(wlanScramble((vitdec(matintrlv((deintrlv(Bits_Initial(:),Random_permutation_Vector)).',Interleaver_Columns,Interleaver_Rows).',trellis,tbl,'trunc','hard')),scramInit),Bits_Stream_Coded); 
+              
+       TX_Bits_Stream_Structure(:, n_ch) = Bits_Stream_Coded;
+       Received_Symbols_FFT_Structure(:,:,n_ch) = y_r(Kset,:);
+       True_Channels_Structure(:,:,n_ch) = hf(Kset,:);
+       DPA_Structure(:,:,n_ch)  = H_Initial;
+       STA_Structure(:,:,n_ch)  = H_STA;
+       TRFI_Structure(:,:,n_ch)  = H_TRFI;          
     end 
     
-    save(['D:\Simulation_' num2str(n_snr)],...
+    save(['./Simulations/',ChType,'_',mod,'_','Simulation_' num2str(n_snr)],...
            'TX_Bits_Stream_Structure',...
             'Received_Symbols_FFT_Structure',...
             'True_Channels_Structure',...
@@ -388,12 +287,12 @@ ylabel('Bit Error Rate (BER)');
 
 %% Normalized Mean Square Error
 Phf_H       = Phf_H_Total/(N_CH);
-ERR_LS      = Err_LS_Preamble / (Phf_H * N_CH * nSym);  
-ERR_STA     = Err_STA / (Phf_H * N_CH * nSym);
-ERR_Initial     = Err_Initial / (Phf_H * N_CH * nSym);
-ERR_CDP     = Err_CDP / (Phf_H * N_CH * nSym);
-ERR_TRFI    = Err_TRFI / (Phf_H * N_CH * nSym);
-ERR_MMSE_VP = Err_MMSE_VP / (Phf_H * N_CH * nSym);
+ERR_LS      = Err_LS_Preamble / (Phf_H * N_CH);  
+ERR_STA     = Err_STA / (Phf_H * N_CH);
+ERR_Initial     = Err_Initial / (Phf_H * N_CH);
+ERR_CDP     = Err_CDP / (Phf_H * N_CH);
+ERR_TRFI    = Err_TRFI / (Phf_H * N_CH);
+ERR_MMSE_VP = Err_MMSE_VP / (Phf_H * N_CH);
 
 figure,
 p1 = semilogy(EbN0dB,ERR_LS,'k--o','LineWidth',2);
@@ -413,4 +312,8 @@ legend([p1(1),p2(1),p3(1),p4(1),p5(1),p6(1)],{'LS','STA','Initial Channel','CDP'
 xlabel('SNR(dB)');
 ylabel('Normalized Mean Sqaure Error (NMSE)');
 
-save(['D:\Simulation_variables'],'mod','Kset','Random_permutation_Vector','fD','ChType');
+save(['./Simulations/',ChType,'_',mod,'_','Simulation_variables'],'mod','Kset','Random_permutation_Vector','fD','ChType');
+
+save(['./Results/',ChType,'_',mod,'_','BER_NMSE'],'BER_Ideal','BER_LS','BER_STA','BER_CDP','BER_TRFI','BER_MMSE_VP','BER_Initial',...
+    'ERR_LS','ERR_STA','ERR_CDP','ERR_TRFI','ERR_MMSE_VP','ERR_Initial');
+
