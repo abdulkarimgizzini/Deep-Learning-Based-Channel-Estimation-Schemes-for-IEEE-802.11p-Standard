@@ -1,15 +1,19 @@
 clc;clearvars;close all; warning('off','all');
-% Load pre-defined DNN Testing Indices
-load('DNN_TestingPacketsIndices.mat');
-all_indices               = (1:1000).';
-training_indices          = setdiff(all_indices,Testing_Packets_Indices);
-Testing_Data_set_size     = size(Testing_Packets_Indices,1);
-Training_Data_set_size    = 1000 - size(Testing_Packets_Indices,1);
+IDX = 1000;
+TR  = 0.80;
+TE  = 0.20;
+All_IDX = 1:IDX;
+training_indices = randperm(IDX,TR*IDX); 
+Testing_Packets_Indices = setdiff(All_IDX,training_indices);
+Testing_Data_set_size     = size(Testing_Packets_Indices,2);
+Training_Data_set_size    = size(training_indices,2);
+
+save('./Datasets/Training_Testing_Indices',  'training_indices','Testing_Packets_Indices','Testing_Data_set_size','Training_Data_set_size');
 
 % Define Simulation parameters
 SNR                       = 0:5:30;
 nUSC                      = 52;
-nSym                      = 100;
+nSym                      = 50;
 mod                       = 'QPSK';
 Ch                        = 'VTV_UC';
 algo                      = 'DPA';
@@ -28,7 +32,7 @@ Test_Y                    = zeros(nUSC*2, Testing_Data_set_size * nSym);
 
 for n_snr = 1:size(SNR,2)
 % Load simulation data according to the defined configurations (Ch, mod, algorithm) 
-load(['D:\Simulation_',num2str(n_snr),'.mat'], 'True_Channels_Structure', [algo '_Structure']);
+load(['./Simulations/',Ch,'_',mod,'_','Simulation_',num2str(n_snr),'.mat'], 'True_Channels_Structure', [algo '_Structure']);
 Algo_Channels_Structure = eval([algo '_Structure']);
 
 % Select Training and Testing datasets
@@ -61,5 +65,5 @@ DNN_Datasets.('Test_X') =  Test_X;
 DNN_Datasets.('Test_Y') =  Test_Y;
 
 % Save the DNN_Datasets structure to the specified folder in order to be used later in the Python code 
-save(['D:\' , algo, '_DNN_Dataset_' num2str(n_snr)],  'DNN_Datasets');
+save(['./Datasets/',Ch,'_',mod,'_', algo, '_DNN_Dataset_' num2str(n_snr)],  'DNN_Datasets');
 end
