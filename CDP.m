@@ -30,7 +30,7 @@ for i = 1:nSym
         unequal_indices = find(X1_0 ~= X2_0);
         
         H_CDP(equal_indices,1) = Initial_Channel_Estimate(equal_indices,1);
-        H_CDP(unequal_indices,1) = he_LS_Preamble(unequal_indices,1);
+        H_CDP(unequal_indices,1) = he_LS_Preamble(unequal_indices,1); 
         
  
     elseif (i > 1)
