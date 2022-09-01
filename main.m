@@ -75,7 +75,7 @@ fc                        = 5.9e9;                  % Carrier Frequecy in Hz.
 vel                       = 48;                    % Moving speed of user in km
 c                         = 3e8;                    % Speed of Light in m/s
 fD                        = 500;%(vel/3.6)/c*fc;         % Doppler freq in Hz
-rchan                     = ch_func.GenFadingChannel(ChType, fD, fs);
+rchan                     = ch_func.GenFadingChannel(ChType, fD, fs); 
 %% Simulation Parameters 
 load('./samples_indices_100.mat');
 configuration = 'testing'; % training or testing
