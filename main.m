@@ -92,7 +92,7 @@ SNR_p                     = EbN0dB + 10*log10(K/nDSC) + 10*log10(K/(K + K_cp)) +
 SNR_p                     = SNR_p.';
 N0                        = Ep*10.^(-SNR_p/10);
 N_CH                      = size(indices,1);; 
-N_SNR                     = length(SNR_p); 
+N_SNR                     = length(SNR_p);  
 
 
 % Normalized mean square error (NMSE) vectors
