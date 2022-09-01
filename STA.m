@@ -85,7 +85,7 @@ for i = 1:nSym
         STA_TA = (1 - (1/alpha)) .*  H_STA(:,i-1) + (1/alpha).* STA_FA;
         
         % Update H_STA Matrix
-        H_STA(:,i) = STA_TA; 
+        H_STA(:,i) = STA_TA;  
     end
 end
 
