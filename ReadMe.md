@@ -1,34 +1,37 @@
-# Update in progress
 
-# This project demonstartes:
+# This repository includes the following:
 - The IEEE 802.11p stanadrd physical layer Tx-Rx implementation with several conventional channel estimators.
 - The full implementation of the STA-DNNs and TRFI-DNN channel estimators proposed in [1] and [2] respectively.
-- Note: the project's files are divided into Matlab_Codes and Python_Codes.
-	- The Matlab_Codes folder includes all the required functions to simulate the Tx-Rx OFDM communication.
-	- The Python_Codes folder includes the implementation of the deep neural network (DNN) training and testing phases. 
+- Note: The Tx-Rx OFDM communication is preformed in Matlab and the DNN processing is performed by Python (Keras).
 
-### Matlab_Codes
+### Files Description 
 - Main.m: The main simulation file, where the simulation parameters (Channel model, OFDM parameters, Modulation scheme, etc...) are defined. 
-- Channel_functions.m: Includes the pre-defined vehicular channel models[3] for different mobility conditions.
+- Channel_functions.m: Includes the pre-defined vehicular channel models [3] for different mobility conditions.
 - Initial_Channel_Estimation.m: Includes the implementation of the data-pilot aided (DPA) channel estimation. Please note that DPA is the initial            estimation step in the following conventional channel estimators.
 - STA.m: Includes the implementation of the spectral temporal averaging (STA) channel estimator [4].
 - CDP.m: Includes the implementation of the constructed data pilots (CDP) channel estimator [5].
 - TRFI.m: Includes the implementation of the time-domain reliability test frequency-domain interpolation (TRFI) channel estimator [6].
 - MMSE_Virtual_Pilots.m: Includes the implementation of the minimum mean square error using virtual pilots (MMSE-VP) channel estimator [7].
-- DNN_Datasets_Generation.m: Divides the saved estimated channels (ex: STA_Structure) into training and testing datasets. Forexample, in the project 	       we consider (1000 Channel realiztions with nSymbols = 100 per frame), then the saved STA_Structure will be of size 52x100x1000. Therefore we                 select 800 and 200 random indices from (1000 indices) to be the training and testing OFDM frames indices, respectively. (Since 80% of data is for           training and 20% of data is for testing). The generated datasets will be processed by the Python_Codes files as explained below. 
+- DNN_Datasets_Generation.m: Complex to real values conversions of the generated datasets for the studied channel estimation scheme. 
 - DNN_Results_Processing.m: Processing the testing results genertead by the DNN_Testing file and caculate the BER and NMSE results of the DNN-based estimators.
-		
-		
-### Python_Codes
-- DNN_Training.py: here the DNN training is performed employing the training datasets and the simulation parameters using the following terminal 	   command: 
-	- **python DNN_Training.py Channel_Model Modulation_Order Channel_Estimator Training_SNR DNN_Input Hidden_Layer1 Hidden_Layer2 Hidden_Layer3 DNN_Output Epochs Batch_size** 
-> ex: python DNN_Training.py VTV_UC QPSK STA 7 104 15 10 15 104 500 128
-- DNN_Testing.py: The testing datasets are tested using the trained DNN model, and the testing results are saved in .mat files, in order to be processed later. The DNN testing can be executed similarly as performed in the training:
-	- **python DNN_Testing.py Channel_Model Modulation_Scheme Channel_Estimator Hidden_Layer1 Hidden_Layer2 Hidden_Layer3** 
-> ex: python DNN_Testing.py VTV_UC QPSK STA 15 10 15
-		
-For more information and questions, please contact me on abdulkarim.gizzini@ensea.fr
+- DNN.py: The DNN training/testing is performed employing the generated training/testing datasets. The file should be executed twice as follows:
+	- **Step1: Training by executing this command python DNN.py  Mobility Channel_Model Modulation_Order Channel_Estimator Training_SNR DNN_Input Hidden_Layer1 Hidden_Layer2 Hidden_Layer3 DNN_Output Epochs Batch_size**
+	- **Step2: Testing by executing this command: python DNN.py  Mobility Channel_Model Modulation_Scheme Channel_Estimator Testing_SNR** 
+> ex: python DNN.py  High VTV_SDWW QPSK STA 40 104 15 10 15 104 500 128
 
+> ex: python DNN.py High VTV_SDWW QPSK STA 40
+		
+### Running Steps:
+1. Run the IDX_Generation.m in order to genertae the dataset indices, training dataset size, and testing dataset size.
+2. Run the main.m file two times as follows:
+	- Specify all the simulation parameters like: the number of OFDM symbols, channel model, mobility scenario, modulatio order, SNR range, etc.
+	- Specify the path of the generated indices in step (1).
+	- The first time for generating the traininig simulation file (set the configuration = 'training' in the code).
+	- The second time for generating the testing simulations files (set the configuration = 'testing' in the code).
+	- After that, the generated simulations files will be saved in your working directory.
+3. Run the DNN_Datasets_Generation.m also two times by changing the configuration as done in step (2) in addition to specifying the channel estimation scheme as well as the OFDM simulation parameters. This step convert the generated datasets from complex to real values.
+4. Run the DNN.py file also two times in order to perform the training first then the testing as mentioned in the DNN.py file description.
+5. After finishing step 4, the DNN results will be saved as a .mat files. Then you need to run the DNN_Results_Processing.m file in order to get the NMSE and BER results of the studied channel estimation scheme.
 
 ### Proposed Methodology
 
@@ -47,4 +50,4 @@ IEEE Conf. Intell. Transp. Syst. (ITSC), Oct. 2014, pp. 1085–1090.
 - [7] J.-Y. Choi, K.-H. Yoo, and C. Mun, ‘‘MMSE channel estimation scheme using virtual pilot signal for IEEE 802.11p,’’ J. Korean Inst. Inf. Technol., vol. 27, no. 1, pp. 27–32, Jan. 2016. 
 
 
-### Citations
+For more information and questions, please contact me on abdulkarim.gizzini@ensea.fr
