@@ -33,12 +33,6 @@
 4. Run the DNN.py file also two times in order to perform the training first then the testing as mentioned in the DNN.py file description.
 5. After finishing step 4, the DNN results will be saved as a .mat files. Then you need to run the DNN_Results_Processing.m file in order to get the NMSE and BER results of the studied channel estimation scheme.
 
-### Proposed Methodology
-
-### Performance Evaluation 
-
-### Computational Complexity Analysis 
-
 ### References
 - [1] A. K. Gizzini, M. Chafii, A. Nimr and G. Fettweis, "Deep Learning Based Channel Estimation Schemes for IEEE 802.11p Standard," in IEEE Access, vol. 8, pp. 113751-113765, 2020.
 - [2] A. K. Gizzini, M. Chafii, A. Nimr and G. Fettweis, "Joint TRFI and Deep Learning for Vehicular Channel Estimation," 2020 IEEE Globecom Workshops (GC Wkshps, Taipei, Taiwan, 2020, pp. 1-6.
