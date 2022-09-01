@@ -1,6 +1,6 @@
 function [H_TRFI, Equalized_OFDM_Symbols] = TRFI(he_LS_Preamble ,y_r, Kset, rp2, pp, ppositions, mod, nUSC, nSym)
 %,URS
-%[subcarriers, OFDM_Symbols] = size(y_r(Kset,:));
+%[subcarriers, OFDM_Symbols] = size(y_r(Kset,:)); 
 %H_TRFI0 = he_LS_Preamble;
 %URS = 0;
 %Received_OFDM_Symbols = y_r(Kset,:);
