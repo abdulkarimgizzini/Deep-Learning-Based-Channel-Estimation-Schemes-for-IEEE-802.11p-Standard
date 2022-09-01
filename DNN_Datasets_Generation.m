@@ -32,7 +32,7 @@ DatasetX_expended = reshape(scheme_Channels_Structure, nUSC, nSym * Dataset_size
 DatasetY_expended = reshape(True_Channels_Structure, nUSC, nSym * Dataset_size);
 
 % Complex to Real domain conversion
-Dataset_X(1:nUSC,:)           = real(DatasetX_expended);
+Dataset_X(1:nUSC,:)           = real(DatasetX_expended); 
 Dataset_X(nUSC+1:2*nUSC,:)    = imag(DatasetX_expended);
 Dataset_Y(1:nUSC,:)           = real(DatasetY_expended);
 Dataset_Y(nUSC+1:2*nUSC,:)    = imag(DatasetY_expended);
