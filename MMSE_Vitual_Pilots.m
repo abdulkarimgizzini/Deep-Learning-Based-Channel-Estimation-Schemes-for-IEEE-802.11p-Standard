@@ -1,5 +1,5 @@
 function [H_MMSE_VP, Equalized_OFDM_Symbols] = MMSE_Vitual_Pilots(he_LS_Preamble ,y_r, Kset,mod, ppositions,dpositions, noise_power_OFDM_Symbols)
-[subcarriers, OFDM_Symbols] = size(y_r(Kset,:));
+[subcarriers, OFDM_Symbols] = size(y_r(Kset,:)); 
 H_MMSE_VP0 = he_LS_Preamble;
 Received_OFDM_Symbols = y_r(Kset,:);
 H_MMSE_VP = zeros(subcarriers, OFDM_Symbols);
@@ -25,7 +25,7 @@ for i = 1:OFDM_Symbols
         P(:,i) = [Initial_Channel_Estimate(7,1); Initial_Channel_Estimate(21,1); Initial_Channel_Estimate(dpositions,1); Initial_Channel_Estimate(32,1); Initial_Channel_Estimate(46,1)];
         
 		% Step 5: Calculate the cross-correlation matrices between the initial channel estimate vector, 
-        % and the reference signal’s channel P1. the auto-correlation
+        % and the reference signalâ€™s channel P1. the auto-correlation
         % matrix of reference signal P1.
         R_HP = zeros(subcarriers,subcarriers);
         R_PP = zeros(subcarriers,subcarriers);
@@ -58,7 +58,7 @@ for i = 1:OFDM_Symbols
         P(:,i) = [Initial_Channel_Estimate(7,1); Initial_Channel_Estimate(21,1); Initial_Channel_Estimate(dpositions,1); Initial_Channel_Estimate(32,1); Initial_Channel_Estimate(46,1)];
         
 		% Step 5: Calculate the cross-correlation matrices between the initial channel estimate vector, 
-        % and the reference signal’s channel P1. the auto-correlation
+        % and the reference signalâ€™s channel P1. the auto-correlation
         % matrix of reference signal P1.
         R_HP = zeros(subcarriers,subcarriers);
         R_PP = zeros(subcarriers,subcarriers);
