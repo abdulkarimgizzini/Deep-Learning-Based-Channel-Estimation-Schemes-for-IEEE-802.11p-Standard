@@ -55,7 +55,7 @@ for n_snr = 1:N_SNR
         Err_scheme_DNN (n_snr) =  Err_scheme_DNN (n_snr) +  mean(sum(abs(H_scheme_DNN - True_Channels_Structure(dpositions,:,u)).^2)); 
         
         % IEEE 802.11p Rx
-        Bits_scheme_DNN     = de2bi((qamdemod(sqrt(Pow) * (Received_Symbols_FFT_Structure(dpositions ,:,u) ./ H_scheme_DNN),M)));
+        Bits_scheme_DNN     = de2bi((qamdemod(sqrt(Pow) * (Received_Symbols_FFT_Structure(dpositions ,:,u) ./ H_scheme_DNN),M))); 
         %Bits_AE_DNN     = de2bi((qamdemod(sqrt(Pow) * (EqualizedS(:,:,u) ),M)));
         Ber_scheme_DNN(n_snr)   = Ber_scheme_DNN(n_snr) + biterr(wlanScramble(vitdec((matintrlv((deintrlv(Bits_scheme_DNN(:),Random_permutation_Vector)).',Interleaver_Columns,16).'),poly2trellis(7,[171 133]),34,'trunc','hard'),93),TX_Bits_Stream_Structure(:,u));
      end
