@@ -44,7 +44,7 @@ For more information and questions, please contact me on abdulkarim.gizzini@ense
 - [5] Z. Zhao, X. Cheng, M. Wen, B. Jiao, and C.-X. Wang, ‘‘Channel estimation schemes for IEEE 802.11p standard,’’ IEEE Intell. Transp. Syst. Mag., vol. 5, no. 4, pp. 38–49, Oct. 2013.
 - [6] Y.-K. Kim, J.-M. Oh, J.-H. Shin, and C. Mun, ‘‘Time and frequency domain channel estimation scheme for IEEE 802.11p,’’ in Proc. 17th Int. 
 IEEE Conf. Intell. Transp. Syst. (ITSC), Oct. 2014, pp. 1085–1090.
-- [7] J.-Y. Choi, K.-H. Yoo, and C. Mun, ‘‘MMSE channel estimation scheme using virtual pilot signal for IEEE 802.11p,’’ J. Korean Inst. Inf. Technol., vol. 27, no. 1, pp. 27–32, Jan. 2016.
+- [7] J.-Y. Choi, K.-H. Yoo, and C. Mun, ‘‘MMSE channel estimation scheme using virtual pilot signal for IEEE 802.11p,’’ J. Korean Inst. Inf. Technol., vol. 27, no. 1, pp. 27–32, Jan. 2016. 
 
 
 ### Citations
