@@ -1,5 +1,5 @@
 function [H_Initial, Equalized_OFDM_Symbols] = DPA(he_LS_Preamble ,y_r, Kset, ppositions, mod, nUSC, nSym)
-%[subcarriers, OFDM_Symbols] = size(y_r(Kset,:));
+%[subcarriers, OFDM_Symbols] = size(y_r(Kset,:)); 
 %H_Initial0 = he_LS_Preamble;
 %Received_OFDM_Symbols = y_r(Kset,:);
 H_Initial = zeros(nUSC, nSym);
