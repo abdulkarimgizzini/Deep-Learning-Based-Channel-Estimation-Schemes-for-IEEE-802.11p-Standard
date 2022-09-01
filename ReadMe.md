@@ -1,3 +1,5 @@
+# Update in progress
+
 # This project demonstartes:
 - The IEEE 802.11p stanadrd physical layer Tx-Rx implementation with several conventional channel estimators.
 - The full implementation of the STA-DNNs and TRFI-DNN channel estimators proposed in [1] and [2] respectively.
@@ -28,6 +30,11 @@
 For more information and questions, please contact me on abdulkarim.gizzini@ensea.fr
 
 
+### Proposed Methodology
+
+### Performance Evaluation 
+
+### Computational Complexity Analysis 
 
 ### References
 - [1] A. K. Gizzini, M. Chafii, A. Nimr and G. Fettweis, "Deep Learning Based Channel Estimation Schemes for IEEE 802.11p Standard," in IEEE Access, vol. 8, pp. 113751-113765, 2020.
@@ -38,3 +45,6 @@ For more information and questions, please contact me on abdulkarim.gizzini@ense
 - [6] Y.-K. Kim, J.-M. Oh, J.-H. Shin, and C. Mun, ‘‘Time and frequency domain channel estimation scheme for IEEE 802.11p,’’ in Proc. 17th Int. 
 IEEE Conf. Intell. Transp. Syst. (ITSC), Oct. 2014, pp. 1085–1090.
 - [7] J.-Y. Choi, K.-H. Yoo, and C. Mun, ‘‘MMSE channel estimation scheme using virtual pilot signal for IEEE 802.11p,’’ J. Korean Inst. Inf. Technol., vol. 27, no. 1, pp. 27–32, Jan. 2016.
+
+
+### Citations
