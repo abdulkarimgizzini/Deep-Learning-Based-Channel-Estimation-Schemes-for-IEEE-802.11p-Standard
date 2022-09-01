@@ -1,5 +1,5 @@
 function func = Channel_functions()
-%% --------------- Memeber Variables --------------------------------------
+%% --------------- Memeber Variables -------------------------------------- 
 % It can be used to store variable, for example constant.
 %% --------------- Memeber functions Declaration --------------------------
 % reference to functions
