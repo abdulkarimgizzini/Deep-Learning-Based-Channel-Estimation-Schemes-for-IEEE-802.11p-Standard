@@ -246,7 +246,14 @@ for n_snr = 1:N_SNR
         Ber_TRFI(n_snr)                                     = Ber_TRFI(n_snr) + biterr(wlanScramble((vitdec(matintrlv((deintrlv(Bits_TRFI(:),Random_permutation_Vector)).',Interleaver_Columns,Interleaver_Rows).',trellis,tbl,'trunc','hard')),scramInit),Bits_Stream_Coded); 
         Ber_MMSE_VP(n_snr)                                  = Ber_MMSE_VP(n_snr) + biterr(wlanScramble((vitdec(matintrlv((deintrlv(Bits_MMSE_VP(:),Random_permutation_Vector)).',Interleaver_Columns,Interleaver_Rows).',trellis,tbl,'trunc','hard')),scramInit),Bits_Stream_Coded); 
        
-        
+          TX_Bits_Stream_Structure(:, n_ch)                  = Bits_Stream_Coded;
+          Received_Symbols_FFT_Structure(:,:,n_ch)           = y_r(Kset,:);
+          True_Channels_Structure(:,:,n_ch)                  = hf(Kset,:);
+          DPA_Structure(:,:,n_ch)                            = H_Initial;
+          STA_Structure(:,:,n_ch)                            = H_STA;
+          TRFI_Structure(:,:,n_ch)                           = H_TRFI;
+
+    
          
     end 
    
