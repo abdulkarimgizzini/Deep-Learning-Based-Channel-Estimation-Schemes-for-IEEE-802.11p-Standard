@@ -44,4 +44,4 @@ IEEE Conf. Intell. Transp. Syst. (ITSC), Oct. 2014, pp. 1085–1090.
 - [7] J.-Y. Choi, K.-H. Yoo, and C. Mun, ‘‘MMSE channel estimation scheme using virtual pilot signal for IEEE 802.11p,’’ J. Korean Inst. Inf. Technol., vol. 27, no. 1, pp. 27–32, Jan. 2016. 
 
 
-For more information and questions, please contact me on abdulkarim.gizzini@ensea.fr
+For more information and questions, please contact me on abdulkarim.gizzini@ensea.fr 
