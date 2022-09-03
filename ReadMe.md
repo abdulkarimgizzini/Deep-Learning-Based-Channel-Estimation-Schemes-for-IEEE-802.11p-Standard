@@ -1,8 +1,5 @@
+This repository includes the source code of the STA-DNN [1] and TRFI-DNN [2] channel estimators proposed in "Deep Learning Based Channel Estimation Schemes for IEEE 802.11 p Standard" and "Joint TRFI and Deep Learning for Vehicular Channel Estimation" papers that are published in the IEEE Access journal and the proceedings of the 2020 IEEE GLOBECOM  Workshops, respectively. Please note that the Tx-Rx OFDM processing is implemented in Matlab (Matlab_Codes) and the LSTM processing is implemented in python (PyTorch) (Python_Codes).
 
-# This repository includes the following:
-- The IEEE 802.11p stanadrd physical layer Tx-Rx implementation with several conventional channel estimators.
-- The full implementation of the STA-DNNs and TRFI-DNN channel estimators proposed in [1] and [2] respectively.
-- Note: The Tx-Rx OFDM communication is preformed in Matlab and the DNN processing is performed by Python (Keras).
 
 ### Files Description 
 - Main.m: The main simulation file, where the simulation parameters (Channel model, OFDM parameters, Modulation scheme, etc...) are defined. 
